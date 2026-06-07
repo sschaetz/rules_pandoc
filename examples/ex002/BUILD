@@ -1,8 +1,7 @@
 load("@rules_pandoc//pandoc:pandoc.bzl", "pandoc")
 
 # Two separate SVG images, in different directories, embedded into a single
-# standalone HTML file. The image directories are surfaced to pandoc via
-# --resource-path, which the rule builds from the `data` files' directories.
+# standalone HTML file.
 pandoc(
     name = "ex002_docs",
     srcs = ["ex002.md"],
@@ -17,9 +16,7 @@ pandoc(
     ],
 )
 
-# Same idea, but the two images are GENERATED (they live under bazel-out, not in
-# the source tree). Exercises resource resolution for dependent/generated inputs,
-# both flat and nested in a sub-dir.
+# Same as above but images are generated
 genrule(
     name = "gen_flat",
     outs = ["gen_flat.svg"],
@@ -46,9 +43,8 @@ pandoc(
     ],
 )
 
-# Edge case: the ONLY resource is nested in a sub-dir, with nothing at the
-# document's own level. This failed with the per-file-dirname approach; it must
-# resolve with the package-root anchor.
+# The only resource is nested in a sub-dir, with nothing at the
+# document's own level.
 pandoc(
     name = "ex002_nested_only_html",
     srcs = ["ex002_nested_only.md"],

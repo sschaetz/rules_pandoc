@@ -6,3 +6,11 @@ local_path_override(
     module_name = "rules_pandoc",
     path = "..",
 )
+
+# rules_typst is a transitive dep (via rules_pandoc's pandoc_pdf). bzlmod
+# overrides only apply from the root module, so it is repeated here.
+archive_override(
+    module_name = "rules_typst",
+    integrity = "sha256-ORfuZ1ic1akNhnamahY8l7BzHdGmmxOz18PVJEG0MQY=",
+    urls = ["https://github.com/periareon/rules_typst/releases/download/0.2.0/rules_typst-0.2.0.tar.gz"],
+)

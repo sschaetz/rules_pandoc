@@ -95,3 +95,79 @@ pandoc = rule(
     },
     toolchains = [TOOLCHAIN_TYPE],
 )
+
+# Provided by rules_typst; supplies the typst binary used as pandoc's PDF engine.
+TYPST_TOOLCHAIN_TYPE = "@rules_typst//typst:toolchain_type"
+
+def _pandoc_pdf_impl(ctx):
+    pandoc_info = ctx.toolchains[TOOLCHAIN_TYPE].pandoc_info
+    typst = ctx.toolchains[TYPST_TOOLCHAIN_TYPE].typstc_info.compiler
+
+    out = ctx.outputs.out
+    if not out:
+        out = ctx.actions.declare_file("{}.pdf".format(ctx.label.name))
+
+    args = ctx.actions.args()
+    # Output extension drives PDF; the engine is the toolchain-provided typst
+    # binary, passed by path so nothing needs to be on PATH.
+    args.add("--output", out)
+    args.add("--pdf-engine", typst)
+
+    # pandoc writes ABSOLUTE media paths into the intermediate .typ (under a temp
+    # dir). typst resolves absolute paths relative to --root, so point root at /
+    # to make them resolve. Inside Bazel's action sandbox the filesystem is
+    # already the security boundary, so this does not widen access.
+    args.add("--pdf-engine-opt=--root=/")
+
+    resource_dirs = depset([_resource_dir(f) for f in ctx.files.srcs + ctx.files.data])
+    args.add_joined("--resource-path", resource_dirs, join_with = ":")
+
+    inputs = ctx.files.srcs + ctx.files.data
+    if ctx.file.template:
+        args.add("--variable", "template=%s" % ctx.file.template.path)
+        inputs.append(ctx.file.template)
+
+    args.add_all(ctx.attr.pandoc_args)
+    args.add_all(ctx.files.srcs)
+
+    ctx.actions.run(
+        mnemonic = "PandocPdf",
+        executable = pandoc_info.compiler,
+        arguments = [args],
+        inputs = depset(inputs),
+        outputs = [out],
+        # Only the typst binary itself -- not rules_typst's process_wrapper --
+        # so we don't pull in a Rust toolchain we never use.
+        tools = depset([typst], transitive = [pandoc_info.all_files]),
+        env = {"SOURCE_DATE_EPOCH": "0"},
+    )
+
+    return [DefaultInfo(files = depset([out]))]
+
+pandoc_pdf = rule(
+    doc = "Convert documents to PDF with pandoc, using typst as the PDF engine.",
+    implementation = _pandoc_pdf_impl,
+    attrs = {
+        "data": attr.label_list(
+            doc = "Images, templates, includes, etc. Their directories are " +
+                  "added to --resource-path.",
+            allow_files = True,
+        ),
+        "out": attr.output(
+            doc = "Output PDF. Defaults to <name>.pdf.",
+        ),
+        "pandoc_args": attr.string_list(
+            doc = "Additional arguments passed verbatim to pandoc.",
+        ),
+        "srcs": attr.label_list(
+            doc = "Input documents, concatenated in the order listed.",
+            allow_files = True,
+            mandatory = True,
+        ),
+        "template": attr.label(
+            doc = "Optional typst template, passed as -V template=<path>.",
+            allow_single_file = [".typ"],
+        ),
+    },
+    toolchains = [TOOLCHAIN_TYPE, TYPST_TOOLCHAIN_TYPE],
+)
