@@ -1,0 +1,8 @@
+"""rules_typst examples"""
+
+bazel_dep(name = "rules_pandoc", version = "0.0.0")
+
+local_path_override(
+    module_name = "rules_pandoc",
+    path = "..",
+)

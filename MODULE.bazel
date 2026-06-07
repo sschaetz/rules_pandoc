@@ -1,0 +1,22 @@
+"""rules_pandoc"""
+
+module(
+    name = "rules_pandoc",
+    version = "0.0.0",
+)
+
+# Platform constraints referenced by the generated toolchains.
+bazel_dep(name = "platforms", version = "1.0.0")
+
+# Provides string_flag, used by //pandoc/settings for version selection.
+bazel_dep(name = "bazel_skylib", version = "1.8.2")
+
+pandoc = use_extension("//pandoc:extensions.bzl", "pandoc")
+use_repo(
+    pandoc,
+    "pandoc_toolchains",
+)
+
+register_toolchains(
+    "@pandoc_toolchains//:all",
+)
