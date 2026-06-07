@@ -2,6 +2,18 @@
 
 load(":toolchain.bzl", "TOOLCHAIN_TYPE")
 
+def _resource_dir(f):
+    """The exec-tree directory matching the root of f's package.
+
+    Document references are written relative to the package (e.g.
+    "assets/img.svg"), so joining this directory with such a reference yields
+    f's actual location -- whether f is a source or generated file, flat or
+    nested. f.root.path is "" for sources and "bazel-out/<cfg>/bin" for
+    generated files; f.owner.package is the package path.
+    """
+    parts = [p for p in [f.root.path, f.owner.package] if p]
+    return "/".join(parts) if parts else "."
+
 # Maps the `format` attribute to (pandoc writer for --to, output file extension).
 _FORMATS = {
     "docx": ("docx", "docx"),
@@ -26,13 +38,13 @@ def _pandoc_impl(ctx):
         args.add("--from", ctx.attr.from_format)
     args.add("--output", out)
 
-    # Restrict pandoc's file IO to inputs we declare; keeps the action hermetic.
-    args.add("--sandbox")
-
-    # Resolve images/templates/includes via a search path built from the
-    # directories of every data file. This handles source vs. generated inputs
-    # (which live in different trees) without staging files into a temp root.
-    resource_dirs = depset([f.dirname for f in ctx.files.data])
+    # Resolve images/templates/includes via a search path anchored at each
+    # input's package root, so references written relative to the document
+    # resolve regardless of source/generated or flat/nested layout. (Bazel's
+    # action sandbox already limits IO to declared inputs, so pandoc's own
+    # --sandbox is redundant here; it is also omitted because it blocks reading
+    # resource-path files in pandoc >= 3.x.)
+    resource_dirs = depset([_resource_dir(f) for f in ctx.files.srcs + ctx.files.data])
     args.add_joined("--resource-path", resource_dirs, join_with = ":")
 
     # Escape hatch for arbitrary flags, then the positional inputs last.

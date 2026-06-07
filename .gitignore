@@ -1,3 +1,9 @@
 /bazel-*
 /examples/bazel-*
+.DS_Store
+.localized
+__MACOSX/
+.AppleDouble
+.LSOverride
+Icon[]
 
