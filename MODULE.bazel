@@ -29,3 +29,6 @@ use_repo(
 register_toolchains(
     "@pandoc_toolchains//:all",
 )
+
+# Provides py_binary for //tools/update_versions (maintainer-only tooling).
+bazel_dep(name = "rules_venv", version = "0.10.0", dev_dependency = True)
