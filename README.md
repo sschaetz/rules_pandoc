@@ -36,4 +36,4 @@ pandoc_pdf(
 - [ ] add more versions and more platforms
 - [ ] Add a `template` example: an `article.typ` with a custom layout, wired through `pandoc_pdf(template = ...)`.
 - [ ] Switch ex002's docx target to PDF-via-typst so SVGs render without `rsvg-convert`.
-- [ ] PDF on Windows: `--root=/` is Unix-only; derive typst `--root` from the `$TMP` drive at action time (needs a wrapper).
+- [ ] PDF on Windows: `--root=/` is Unix-only; derive typst `--root` from the `$TMP` drive at action time. Needs a compiled (Go/Rust) wrapper and a Windows CI runner to verify. (Non-PDF Windows already works: the resource-path separator is toolchain-provided — `;` on Windows, `:` elsewhere.)

@@ -75,6 +75,7 @@ exports_files(["bin/pandoc"])
 pandoc_toolchain(
     name = "toolchain",
     compiler = "bin/pandoc",
+    path_list_separator = ":",
 )
 """
 
@@ -88,6 +89,7 @@ exports_files(["pandoc.exe"])
 pandoc_toolchain(
     name = "toolchain",
     compiler = "pandoc.exe",
+    path_list_separator = ";",
 )
 """
 

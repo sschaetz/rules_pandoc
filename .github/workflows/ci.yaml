@@ -16,8 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TODO: add windows-2022
-        os: [macos-latest, ubuntu-24.04, ubuntu-24.04-arm]
+        os: [macos-latest, ubuntu-24.04, ubuntu-24.04-arm, windows-2022]
         bazel-version: [7.7.1, 8.2.0, 9.1.1]
 
     steps:

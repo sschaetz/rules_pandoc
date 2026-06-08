@@ -24,8 +24,9 @@ _FORMATS = {
 }
 
 def _pandoc_impl(ctx):
-    compiler = ctx.toolchains[TOOLCHAIN_TYPE].pandoc_info.compiler
-    all_files = ctx.toolchains[TOOLCHAIN_TYPE].pandoc_info.all_files
+    pandoc_info = ctx.toolchains[TOOLCHAIN_TYPE].pandoc_info
+    compiler = pandoc_info.compiler
+    all_files = pandoc_info.all_files
 
     writer, ext = _FORMATS[ctx.attr.format]
     out = ctx.outputs.out
@@ -45,7 +46,7 @@ def _pandoc_impl(ctx):
     # --sandbox is redundant here; it is also omitted because it blocks reading
     # resource-path files in pandoc >= 3.x.)
     resource_dirs = depset([_resource_dir(f) for f in ctx.files.srcs + ctx.files.data])
-    args.add_joined("--resource-path", resource_dirs, join_with = ":")
+    args.add_joined("--resource-path", resource_dirs, join_with = pandoc_info.path_list_separator)
 
     # Escape hatch for arbitrary flags, then the positional inputs last.
     args.add_all(ctx.attr.pandoc_args)
@@ -120,7 +121,7 @@ def _pandoc_pdf_impl(ctx):
     args.add("--pdf-engine-opt=--root=/")
 
     resource_dirs = depset([_resource_dir(f) for f in ctx.files.srcs + ctx.files.data])
-    args.add_joined("--resource-path", resource_dirs, join_with = ":")
+    args.add_joined("--resource-path", resource_dirs, join_with = pandoc_info.path_list_separator)
 
     inputs = ctx.files.srcs + ctx.files.data
     if ctx.file.template:
