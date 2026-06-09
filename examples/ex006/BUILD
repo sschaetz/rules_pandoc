@@ -7,9 +7,9 @@ pandoc(
     name = "ex006_html",
     srcs = ["ex006.md"],
     format = "html",
-    template = "template.html",
     metadata = {
         "title": "Example 006",
         "lang": "en",
     },
+    template = "template.html",
 )

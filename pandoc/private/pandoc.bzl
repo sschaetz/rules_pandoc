@@ -160,6 +160,7 @@ def _pandoc_pdf_impl(ctx):
         out = ctx.actions.declare_file("{}.pdf".format(ctx.label.name))
 
     args = ctx.actions.args()
+
     # Output extension drives PDF; the engine is the toolchain-provided typst
     # binary, passed by path so nothing needs to be on PATH.
     args.add("--output", out)

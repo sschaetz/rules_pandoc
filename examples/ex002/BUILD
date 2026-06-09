@@ -6,8 +6,8 @@ pandoc(
     name = "ex002_docs",
     srcs = ["ex002.md"],
     data = [
-        "img-ex01.svg",
         "assets/img-ex02.svg",
+        "img-ex01.svg",
     ],
     format = "docx",
     pandoc_args = [
@@ -50,5 +50,8 @@ pandoc(
     srcs = ["ex002_nested_only.md"],
     data = [":gen_nested"],
     format = "html",
-    pandoc_args = ["--standalone", "--embed-resources"],
+    pandoc_args = [
+        "--standalone",
+        "--embed-resources",
+    ],
 )

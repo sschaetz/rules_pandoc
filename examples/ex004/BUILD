@@ -14,8 +14,8 @@ pandoc(
     srcs = ["ex004.md"],
     format = "html",
     metadata = _META,
-    variables = {"subtitle": "metadata vs variables"},
     pandoc_args = ["--standalone"],
+    variables = {"subtitle": "metadata vs variables"},
 )
 
 # Exercises the epub output (epub requires a title, supplied via metadata).

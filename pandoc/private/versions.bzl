@@ -11,7 +11,6 @@ Recognized platform keys:
     linux-x86_64, linux-aarch64, macos-x86_64, macos-aarch64, windows-x86_64
 """
 
-
 PANDOC_VERSIONS = {
     "3.9.0.2": {
         "linux-aarch64": {
