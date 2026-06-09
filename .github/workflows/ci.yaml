@@ -36,3 +36,19 @@ jobs:
         working-directory: "${{ github.workspace }}/examples"
         run: |
           bazel build //...
+      - name: collect artifacts
+        working-directory: "${{ github.workspace }}/examples"
+        shell: bash
+        run: |
+          # Copy each target's output into a flat dir for upload.
+          mkdir -p "${{ github.workspace }}/artifacts"
+          for f in $(bazel cquery //... --output=files 2>/dev/null); do
+            cp "$f" "${{ github.workspace }}/artifacts/" || true
+          done
+          ls -la "${{ github.workspace }}/artifacts"
+      - name: upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: examples-${{ matrix.os }}-bazel-${{ matrix.bazel-version }}
+          path: artifacts/
+          if-no-files-found: error
