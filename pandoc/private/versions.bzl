@@ -13,6 +13,33 @@ Recognized platform keys:
 
 
 PANDOC_VERSIONS = {
+    "3.9.0.2": {
+        "linux-aarch64": {
+            "urls": ["https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-arm64.tar.gz"],
+            "integrity": "sha256-ttIej5w7FXRPWnq0AkgBkVftd5OHXb4Dg9TIL/VytSg=",
+            "strip_prefix": "pandoc-3.9.0.2",
+        },
+        "linux-x86_64": {
+            "urls": ["https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-amd64.tar.gz"],
+            "integrity": "sha256-ppq/q6vailaWmiVLCflVOnvond7ADU4P6f1YXXGmdQg=",
+            "strip_prefix": "pandoc-3.9.0.2",
+        },
+        "macos-aarch64": {
+            "urls": ["https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-arm64-macOS.zip"],
+            "integrity": "sha256-bp7KhEB2vLtZm77ru6eKcPk7Uwd4K4XCwnKHKBLIiHU=",
+            "strip_prefix": "pandoc-3.9.0.2-arm64",
+        },
+        "macos-x86_64": {
+            "urls": ["https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-x86_64-macOS.zip"],
+            "integrity": "sha256-ufvOq8y8jzSsAhpQSD/DL4FgVo0LSywi2BuynjBU/YI=",
+            "strip_prefix": "pandoc-3.9.0.2-x86_64",
+        },
+        "windows-x86_64": {
+            "urls": ["https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-windows-x86_64.zip"],
+            "integrity": "sha256-yXVC8oAPRG54jZ90I3hW2ZVCGtG7PMgyQoaEDF8nLTo=",
+            "strip_prefix": "pandoc-3.9.0.2",
+        },
+    },
     "3.10": {
         "linux-aarch64": {
             "urls": ["https://github.com/jgm/pandoc/releases/download/3.10/pandoc-3.10-linux-arm64.tar.gz"],
