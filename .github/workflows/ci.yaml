@@ -36,6 +36,15 @@ jobs:
         working-directory: "${{ github.workspace }}/examples"
         run: |
           bazel build //...
+      # ex005 is tagged "manual" (skipped by //...). Build it by name with
+      # stamping enabled to exercise the git-sha example on every OS. The status
+      # command is invoked via `bash` so it runs on Windows (Git Bash) too.
+      - name: build stamped example
+        working-directory: "${{ github.workspace }}/examples"
+        shell: bash
+        run: |
+          bazel build //ex005:ex005_html --stamp \
+            --workspace_status_command="bash tools/workspace_status.sh"
       - name: collect artifacts
         working-directory: "${{ github.workspace }}/examples"
         shell: bash
