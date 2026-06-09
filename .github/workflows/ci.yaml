@@ -13,6 +13,11 @@ on:
 jobs:
   ci-examples:
     runs-on: ${{ matrix.os }}
+    env:
+      # On Windows, `shell: bash` is Git Bash (MSYS2), which rewrites the
+      # leading // of Bazel labels / Excluding all args from path conversion
+      # to keep labels intact for every bash step.
+      MSYS2_ARG_CONV_EXCL: "*"
     strategy:
       fail-fast: false
       matrix:
@@ -58,6 +63,6 @@ jobs:
       - name: upload artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: examples-${{ matrix.os }}-bazel-${{ matrix.bazel-version }}
+          name: examples-${{ github.sha }}-${{ matrix.os }}-bazel-${{ matrix.bazel-version }}
           path: artifacts/
           if-no-files-found: error
