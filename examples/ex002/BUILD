@@ -1,19 +1,16 @@
 load("@rules_pandoc//pandoc:pandoc.bzl", "pandoc")
 
-# Two separate SVG images, in different directories, embedded into a single
-# standalone HTML file.
+# Two separate raster (PNG) images, in different directories, embedded into a
+# docx. PNG needs no external rasterizer (unlike SVG, which docx would hand to
+# rsvg-convert). The PNG assets are committed alongside this BUILD.
 pandoc(
     name = "ex002_docs",
     srcs = ["ex002.md"],
     data = [
-        "assets/img-ex02.svg",
-        "img-ex01.svg",
+        "assets/img-ex02.png",
+        "img-ex01.png",
     ],
     format = "docx",
-    pandoc_args = [
-        "--standalone",
-        "--embed-resources",
-    ],
 )
 
 # Same as above but images are generated

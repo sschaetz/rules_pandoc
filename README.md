@@ -36,5 +36,5 @@ pandoc_pdf(
 - [x] more examples, cleaner structure
 - [x] add a `template` example: an `article.typ` with a custom layout, wired through `pandoc_pdf(template = ...)`.
 - [x] add buildify pre commit and CI step
-- [ ] switch ex002's docx target to PDF-via-typst so SVGs render without `rsvg-convert`.
+- [x] switch ex002's docx target to PDF-via-typst so SVGs render without `rsvg-convert`.
 - [ ] release to bazel registry
