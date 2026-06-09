@@ -77,6 +77,16 @@ def _pandoc_impl(ctx):
 
     _add_metadata_and_variables(args, ctx)
 
+    # Typed file options: pass the input's path directly (cwd is the execroot)
+    # and declare it as an action input so it is present and tracked.
+    extra_inputs = []
+    if ctx.file.template:
+        args.add("--template", ctx.file.template.path)
+        extra_inputs.append(ctx.file.template)
+    if ctx.file.reference_doc:
+        args.add("--reference-doc", ctx.file.reference_doc.path)
+        extra_inputs.append(ctx.file.reference_doc)
+
     # Escape hatch for arbitrary flags, then the positional inputs last.
     args.add_all(ctx.attr.pandoc_args)
     args.add_all(ctx.files.srcs)
@@ -85,7 +95,7 @@ def _pandoc_impl(ctx):
         mnemonic = "Pandoc",
         executable = compiler,
         arguments = [args],
-        inputs = depset(ctx.files.srcs + ctx.files.data),
+        inputs = depset(ctx.files.srcs + ctx.files.data + extra_inputs),
         outputs = [out],
         tools = all_files,
         env = {"SOURCE_DATE_EPOCH": "0"},
@@ -117,10 +127,22 @@ pandoc = rule(
         "pandoc_args": attr.string_list(
             doc = "Additional arguments passed verbatim to pandoc.",
         ),
+        "reference_doc": attr.label(
+            doc = "Style-reference document for docx/odt/pptx output, passed as " +
+                  "--reference-doc. pandoc copies its styles into the output. " +
+                  "Declared as an input automatically.",
+            allow_single_file = [".docx", ".odt", ".pptx"],
+        ),
         "srcs": attr.label_list(
             doc = "Input documents, concatenated in the order listed.",
             allow_files = True,
             mandatory = True,
+        ),
+        "template": attr.label(
+            doc = "Custom pandoc template with $placeholder$ slots, passed as " +
+                  "--template (for text formats like html/latex). Declared as " +
+                  "an input automatically.",
+            allow_single_file = True,
         ),
     }),
     toolchains = [TOOLCHAIN_TYPE],
