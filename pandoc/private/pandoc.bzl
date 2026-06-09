@@ -17,10 +17,37 @@ def _resource_dir(f):
 # Maps the `format` attribute to (pandoc writer for --to, output file extension).
 _FORMATS = {
     "docx": ("docx", "docx"),
+    "epub": ("epub", "epub"),
     "gfm": ("gfm", "md"),
     "html": ("html5", "html"),
     "latex": ("latex", "tex"),
+    "odt": ("odt", "odt"),
     "typst": ("typst", "typ"),
+}
+
+def _add_metadata_and_variables(args, ctx):
+    """Append --metadata/--variable key=value pairs from the dict attrs.
+
+    metadata (-M) sets semantic document data (title, author, lang, ...) that
+    flows into output properties and is visible to templates and filters.
+    variables (-V) sets template-only knobs that fill $var$ placeholders.
+    """
+    for key, value in ctx.attr.metadata.items():
+        args.add("--metadata", "{}={}".format(key, value))
+    for key, value in ctx.attr.variables.items():
+        args.add("--variable", "{}={}".format(key, value))
+
+# Attributes shared by the pandoc and pandoc_pdf rules.
+_COMMON_ATTRS = {
+    "metadata": attr.string_dict(
+        doc = "Document metadata passed as --metadata key=value (e.g. title, " +
+              "author, lang). Affects output properties; visible to templates " +
+              "and filters.",
+    ),
+    "variables": attr.string_dict(
+        doc = "Template variables passed as --variable key=value. Fill $var$ " +
+              "placeholders in templates only.",
+    ),
 }
 
 def _pandoc_impl(ctx):
@@ -48,6 +75,8 @@ def _pandoc_impl(ctx):
     resource_dirs = depset([_resource_dir(f) for f in ctx.files.srcs + ctx.files.data])
     args.add_joined("--resource-path", resource_dirs, join_with = pandoc_info.path_list_separator)
 
+    _add_metadata_and_variables(args, ctx)
+
     # Escape hatch for arbitrary flags, then the positional inputs last.
     args.add_all(ctx.attr.pandoc_args)
     args.add_all(ctx.files.srcs)
@@ -67,7 +96,7 @@ def _pandoc_impl(ctx):
 pandoc = rule(
     doc = "Convert one or more documents with pandoc.",
     implementation = _pandoc_impl,
-    attrs = {
+    attrs = dict(_COMMON_ATTRS, **{
         "data": attr.label_list(
             doc = "Images, templates, includes, etc. Their directories are " +
                   "added to --resource-path.",
@@ -93,7 +122,7 @@ pandoc = rule(
             allow_files = True,
             mandatory = True,
         ),
-    },
+    }),
     toolchains = [TOOLCHAIN_TYPE],
 )
 
@@ -123,6 +152,8 @@ def _pandoc_pdf_impl(ctx):
     resource_dirs = depset([_resource_dir(f) for f in ctx.files.srcs + ctx.files.data])
     args.add_joined("--resource-path", resource_dirs, join_with = pandoc_info.path_list_separator)
 
+    _add_metadata_and_variables(args, ctx)
+
     inputs = ctx.files.srcs + ctx.files.data
     if ctx.file.template:
         args.add("--variable", "template=%s" % ctx.file.template.path)
@@ -148,7 +179,7 @@ def _pandoc_pdf_impl(ctx):
 pandoc_pdf = rule(
     doc = "Convert documents to PDF with pandoc, using typst as the PDF engine.",
     implementation = _pandoc_pdf_impl,
-    attrs = {
+    attrs = dict(_COMMON_ATTRS, **{
         "data": attr.label_list(
             doc = "Images, templates, includes, etc. Their directories are " +
                   "added to --resource-path.",
@@ -169,6 +200,6 @@ pandoc_pdf = rule(
             doc = "Optional typst template, passed as -V template=<path>.",
             allow_single_file = [".typ"],
         ),
-    },
+    }),
     toolchains = [TOOLCHAIN_TYPE, TYPST_TOOLCHAIN_TYPE],
 )
