@@ -1,49 +1,31 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("@stardoc//stardoc:stardoc.bzl", "stardoc")
 
 toolchain_type(
     name = "toolchain_type",
     visibility = ["//visibility:public"],
 )
 
-# --- API documentation generation ------------------------------------------
-# Stardoc runs on the public shims so the generated `load(...)` lines point at
-# the public paths users should use. The two outputs are concatenated into a
-# single api_generated.md that //docs commits and drift-checks.
+# Exposed to //docs so Stardoc can document the public shims. bzl_library uses
+# bazel_skylib (a regular dep), so loading this package stays consumer-safe --
+# unlike the @stardoc rule, which is a dev dependency and must live in //docs.
+exports_files(
+    [
+        "pandoc.bzl",
+        "pandoc_pdf.bzl",
+    ],
+    visibility = ["//docs:__pkg__"],
+)
 
 bzl_library(
     name = "pandoc_shim",
     srcs = ["pandoc.bzl"],
+    visibility = ["//docs:__pkg__"],
     deps = ["//pandoc/private:pandoc_bzl"],
 )
 
 bzl_library(
     name = "pandoc_pdf_shim",
     srcs = ["pandoc_pdf.bzl"],
-    deps = ["//pandoc/private:pandoc_bzl"],
-)
-
-stardoc(
-    name = "pandoc_doc",
-    out = "pandoc_gen.md",
-    input = "pandoc.bzl",
-    deps = [":pandoc_shim"],
-)
-
-stardoc(
-    name = "pandoc_pdf_doc",
-    out = "pandoc_pdf_gen.md",
-    input = "pandoc_pdf.bzl",
-    deps = [":pandoc_pdf_shim"],
-)
-
-genrule(
-    name = "api_gen",
-    srcs = [
-        ":pandoc_doc",
-        ":pandoc_pdf_doc",
-    ],
-    outs = ["api_generated.md"],
-    cmd = "cat $(SRCS) > $@",
     visibility = ["//docs:__pkg__"],
+    deps = ["//pandoc/private:pandoc_bzl"],
 )

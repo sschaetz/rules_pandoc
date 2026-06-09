@@ -1,13 +1,43 @@
 load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+load("@stardoc//stardoc:stardoc.bzl", "stardoc")
+
+# All Stardoc machinery lives here, not in //pandoc: @stardoc is a dev
+# dependency (invisible to consumers), and this package is only ever built by
+# maintainers/CI. Stardoc runs on the public shims so the generated load()
+# lines point at the public paths.
+
+stardoc(
+    name = "pandoc_doc",
+    out = "pandoc_gen.md",
+    input = "//pandoc:pandoc.bzl",
+    deps = ["//pandoc:pandoc_shim"],
+)
+
+stardoc(
+    name = "pandoc_pdf_doc",
+    out = "pandoc_pdf_gen.md",
+    input = "//pandoc:pandoc_pdf.bzl",
+    deps = ["//pandoc:pandoc_pdf_shim"],
+)
+
+genrule(
+    name = "api_gen",
+    srcs = [
+        ":pandoc_doc",
+        ":pandoc_pdf_doc",
+    ],
+    outs = ["api_generated.md"],
+    cmd = "cat $(SRCS) > $@",
+)
 
 # Drift gate: fails if docs/api.md is out of sync with the rule docstrings.
 # Regenerate with:
-#   bazel build //pandoc:api_gen && cp bazel-bin/pandoc/api_generated.md docs/api.md
+#   bazel build //docs:api_gen && cp bazel-bin/docs/api_generated.md docs/api.md
 diff_test(
     name = "api_check",
     failure_message = "docs/api.md is stale; regenerate it (see docs/BUILD.bazel).",
     file1 = "api.md",
-    file2 = "//pandoc:api_generated.md",
+    file2 = ":api_generated.md",
 )
 
 exports_files(["api.md"])
