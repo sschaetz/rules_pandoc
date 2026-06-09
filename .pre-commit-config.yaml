@@ -1,0 +1,15 @@
+# buildifier-prebuilt is wired in as a local hook so the formatter version is
+# pinned in one place (MODULE.bazel) and shared with CI's //:buildifier.check.
+# The bazel target formats the whole tree based on its own exclude_patterns, so
+# filenames are not passed through.
+repos:
+  - repo: local
+    hooks:
+      - id: buildifier
+        name: buildifier
+        description: Format BUILD, .bzl and MODULE files
+        entry: bazel run //:buildifier --
+        language: system
+        types: [bazel]
+        pass_filenames: false
+        require_serial: true

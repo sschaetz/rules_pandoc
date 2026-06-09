@@ -32,8 +32,9 @@ pandoc_pdf(
 - [x] support Windows (CI green across the full matrix incl. windows-2022; PDF image embedding pending artifact verification — see below)
 - [x] add more platforms
 - [x] add more versions
-- [ ] consider dropping dependency on rules_typst
-- [ ] more examples, cleaner structure
-- [ ] add a `template` example: an `article.typ` with a custom layout, wired through `pandoc_pdf(template = ...)`.
+- [x] consider dropping dependency on rules_typst
+- [x] more examples, cleaner structure
+- [x] add a `template` example: an `article.typ` with a custom layout, wired through `pandoc_pdf(template = ...)`.
+- [x] add buildify pre commit and CI step
 - [ ] switch ex002's docx target to PDF-via-typst so SVGs render without `rsvg-convert`.
 - [ ] release to bazel registry

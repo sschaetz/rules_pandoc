@@ -32,3 +32,8 @@ register_toolchains(
 
 # Provides py_binary for //tools/update_versions (maintainer-only tooling).
 bazel_dep(name = "rules_venv", version = "0.10.0", dev_dependency = True)
+
+# Supplies prebuilt buildifier binaries for the //:buildifier targets used to
+# format and lint BUILD/.bzl/MODULE files. Toolchains are registered by the
+# module itself. Maintainer/CI tooling only.
+bazel_dep(name = "buildifier_prebuilt", version = "8.5.1.2", dev_dependency = True)

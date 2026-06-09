@@ -1,0 +1,29 @@
+load("@buildifier_prebuilt//:rules.bzl", "buildifier", "buildifier_test")
+
+# Format every BUILD/.bzl/MODULE file in the repo in place:
+#   bazel run //:buildifier
+buildifier(
+    name = "buildifier",
+    exclude_patterns = [
+        "./.git/*",
+        "./bazel-*/*",
+        "./examples/bazel-*/*",
+    ],
+    lint_mode = "fix",
+)
+
+# CI gate: fails if any file is not formatted or has lint warnings.
+#   bazel test //:buildifier.check
+buildifier_test(
+    name = "buildifier.check",
+    timeout = "short",
+    exclude_patterns = [
+        "./.git/*",
+        "./bazel-*/*",
+        "./examples/bazel-*/*",
+    ],
+    lint_mode = "warn",
+    mode = "diff",
+    no_sandbox = True,
+    workspace = "//:MODULE.bazel",
+)
