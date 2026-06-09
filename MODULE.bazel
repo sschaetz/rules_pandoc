@@ -37,3 +37,6 @@ bazel_dep(name = "rules_venv", version = "0.10.0", dev_dependency = True)
 # format and lint BUILD/.bzl/MODULE files. Toolchains are registered by the
 # module itself. Maintainer/CI tooling only.
 bazel_dep(name = "buildifier_prebuilt", version = "8.5.1.2", dev_dependency = True)
+
+# Generates //docs/api.md from rule docstrings. Maintainer/CI tooling only.
+bazel_dep(name = "stardoc", version = "0.7.2", dev_dependency = True)

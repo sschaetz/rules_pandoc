@@ -149,11 +149,11 @@ pandoc = rule(
 )
 
 # Provided by rules_typst; supplies the typst binary used as pandoc's PDF engine.
-TYPST_TOOLCHAIN_TYPE = "@rules_typst//typst:toolchain_type"
+_TYPST_TOOLCHAIN_TYPE = "@rules_typst//typst:toolchain_type"
 
 def _pandoc_pdf_impl(ctx):
     pandoc_info = ctx.toolchains[TOOLCHAIN_TYPE].pandoc_info
-    typst = ctx.toolchains[TYPST_TOOLCHAIN_TYPE].typstc_info.compiler
+    typst = ctx.toolchains[_TYPST_TOOLCHAIN_TYPE].typstc_info.compiler
 
     out = ctx.outputs.out
     if not out:
@@ -224,5 +224,5 @@ pandoc_pdf = rule(
             allow_single_file = [".typ"],
         ),
     }),
-    toolchains = [TOOLCHAIN_TYPE, TYPST_TOOLCHAIN_TYPE],
+    toolchains = [TOOLCHAIN_TYPE, _TYPST_TOOLCHAIN_TYPE],
 )

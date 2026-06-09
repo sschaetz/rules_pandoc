@@ -1,0 +1,13 @@
+load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+
+# Drift gate: fails if docs/api.md is out of sync with the rule docstrings.
+# Regenerate with:
+#   bazel build //pandoc:api_gen && cp bazel-bin/pandoc/api_generated.md docs/api.md
+diff_test(
+    name = "api_check",
+    failure_message = "docs/api.md is stale; regenerate it (see docs/BUILD.bazel).",
+    file1 = "api.md",
+    file2 = "//pandoc:api_generated.md",
+)
+
+exports_files(["api.md"])

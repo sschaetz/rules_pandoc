@@ -1,30 +1,55 @@
 # rules_pandoc
 
-Work on progress. Bazel wrapper for [pandoc](https://pandoc.org/). Inspired by [rules_typst](https://github.com/periareon/rules_typst).
+Work in progress. Bazel rules for [pandoc](https://pandoc.org/), inspired by [rules_typst](https://github.com/periareon/rules_typst).
 
-pandoc non-PDF use:
+Full attribute reference: [docs/api.md](docs/api.md).
 
-```bazel
-load("@rules_pandoc//pandoc:pandoc.bzl", "pandoc")
+## Examples
 
-pandoc(
-    name = "mydoc",
-    srcs = ["mydoc.md"],
-    format = "docx",
-)
-```
+The three most common pandoc workflows (based on a survey of real-world usage):
 
-pandoc PDF use, uses [typst](https://typst.app/) as PDF engine
+### Markdown → PDF
+
+Uses [typst](https://typst.app/) as the PDF engine, fetched by Bazel — no LaTeX install required.
 
 ```bazel
 load("@rules_pandoc//pandoc:pandoc_pdf.bzl", "pandoc_pdf")
 
 pandoc_pdf(
-    name = "ex003_pdf",
-    srcs = ["ex003.md"],
-    pandoc_args = ["--wrap=none"],
+    name = "report_pdf",
+    srcs = ["report.md"],
+    metadata = {"title": "Quarterly Report", "author": "Stefan"},
 )
 ```
+
+### Markdown → standalone HTML with a table of contents
+
+```bazel
+load("@rules_pandoc//pandoc:pandoc.bzl", "pandoc")
+
+pandoc(
+    name = "report_html",
+    srcs = ["report.md"],
+    format = "html",
+    metadata = {"title": "Quarterly Report"},
+    pandoc_args = ["--standalone", "--toc"],
+)
+```
+
+### Markdown → Word (docx) with custom styles
+
+```bazel
+load("@rules_pandoc//pandoc:pandoc.bzl", "pandoc")
+
+pandoc(
+    name = "report_docx",
+    srcs = ["report.md"],
+    format = "docx",
+    reference_doc = "corporate-style.docx",
+)
+```
+
+See [`examples/`](examples/) for runnable versions of these and more (images, generated inputs, templates, git-sha stamping).
 
 ## TODO
 

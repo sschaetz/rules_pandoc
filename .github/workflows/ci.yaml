@@ -23,6 +23,9 @@ jobs:
       - name: check BUILD/.bzl formatting and lint
         run: |
           bazel test //:buildifier.check
+      - name: check generated docs are up to date
+        run: |
+          bazel test //docs:api_check
 
   ci-examples:
     runs-on: ${{ matrix.os }}
