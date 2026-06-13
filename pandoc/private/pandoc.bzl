@@ -179,7 +179,7 @@ def _pandoc_pdf_impl(ctx):
 
     inputs = ctx.files.srcs + ctx.files.data
     if ctx.file.template:
-        args.add("--variable", "template=%s" % ctx.file.template.path)
+        args.add("--template", ctx.file.template.path)
         inputs.append(ctx.file.template)
 
     args.add_all(ctx.attr.pandoc_args)
@@ -220,7 +220,10 @@ pandoc_pdf = rule(
             mandatory = True,
         ),
         "template": attr.label(
-            doc = "Optional typst template, passed as -V template=<path>.",
+            doc = "Custom typst template, passed as --template. Uses pandoc " +
+                  "$placeholder$ syntax (e.g. $title$, $body$) -- pandoc fills it " +
+                  "and typst compiles the result. Declared as an input " +
+                  "automatically.",
             allow_single_file = [".typ"],
         ),
     }),
