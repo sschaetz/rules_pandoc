@@ -6,11 +6,9 @@ Full attribute reference: [docs/api.md](docs/api.md).
 
 ## Examples
 
-The three most common pandoc workflows:
-
 ### Markdown → PDF
 
-Uses bundled [typst](https://typst.app/) no LaTeX install required.
+The simplest case — bundled [typst](https://typst.app/), no LaTeX install required.
 
 ```bazel
 load("@rules_pandoc//pandoc:pandoc_pdf.bzl", "pandoc_pdf")
@@ -24,6 +22,22 @@ pandoc_pdf(
     },
 )
 ```
+
+### Markdown → a styled PDF document (typst template)
+
+A Markdown source rendered into a branded PDF via a [typst](https://typst.app/)
+template ([full setup in `examples/ex008/`](examples/ex008/)):
+
+```bazel
+pandoc_pdf(
+    name = "spec",
+    srcs = ["spec.md"],
+    template = "template.typ",
+    data = ["assets/logo.svg"],
+)
+```
+
+
 
 ### Markdown → standalone HTML with a table of contents
 
