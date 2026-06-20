@@ -60,7 +60,7 @@ Convert documents to PDF with pandoc, using typst as the PDF engine.
 | <a id="pandoc_pdf-out"></a>out |  Output PDF. Defaults to <name>.pdf.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
 | <a id="pandoc_pdf-metadata"></a>metadata |  Document metadata passed as --metadata key=value (e.g. title, author, lang). Affects output properties; visible to templates and filters.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 | <a id="pandoc_pdf-pandoc_args"></a>pandoc_args |  Additional arguments passed verbatim to pandoc.   | List of strings | optional |  `[]`  |
-| <a id="pandoc_pdf-template"></a>template |  Optional typst template, passed as -V template=<path>.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
+| <a id="pandoc_pdf-template"></a>template |  Custom typst template, passed as --template. Uses pandoc $placeholder$ syntax (e.g. $title$, $body$) -- pandoc fills it and typst compiles the result. Declared as an input automatically.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
 | <a id="pandoc_pdf-variables"></a>variables |  Template variables passed as --variable key=value. Fill $var$ placeholders in templates only.   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  `{}`  |
 
 
