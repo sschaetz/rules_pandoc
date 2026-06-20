@@ -67,3 +67,36 @@ pandoc(
 ```
 
 See [`examples/`](examples/) for runnable versions of these and more (images, generated inputs, templates, git-sha stamping).
+
+## Contributing
+
+`BUILD`, `.bzl`, and `MODULE` files are formatted and linted with
+[buildifier](https://github.com/bazelbuild/buildtools). The version is pinned
+via `buildifier_prebuilt` in `MODULE.bazel` and shared between the pre-commit
+hook and CI (`//:buildifier.check`).
+
+### Install the pre-commit hook
+
+Requires [pre-commit](https://pre-commit.com):
+
+```bash
+pip install pre-commit      # or: brew install pre-commit
+pre-commit install          # from the repo root; installs the git hook
+```
+
+buildifier then runs automatically on every commit.
+
+### Run it manually
+
+```bash
+# Format the whole tree in place (what the hook runs):
+bazel run //:buildifier
+
+# Or through pre-commit, without committing:
+pre-commit run buildifier --all-files
+
+# Check only — fails on unformatted/lint issues, does not modify files
+# (this is what CI gates on):
+bazel test //:buildifier.check
+```
+

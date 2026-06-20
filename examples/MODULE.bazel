@@ -6,6 +6,9 @@ local_path_override(
     path = "..",
 )
 
+# Used by ex009 to assemble markdown from a template + substitutions.
+bazel_dep(name = "bazel_skylib", version = "1.8.2")
+
 # rules_typst is a transitive dep (via rules_pandoc's pandoc_pdf). bzlmod
 # overrides only apply from the root module, so it is repeated here.
 archive_override(
